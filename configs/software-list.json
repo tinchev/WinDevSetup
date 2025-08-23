@@ -61,6 +61,7 @@
       "name": "Node.js with NVM",
       "winget_id": "CoreyButler.NVMforWindows",
       "chocolatey_id": "nvm",
+      "custom_install": false,
       "check_command": "nvm version"
     },
     {
@@ -75,6 +76,20 @@
       "chocolatey_id": "sql-server-2022",
       "custom_install": false,
       "check_command": "Get-Service -Name MSSQLSERVER -ErrorAction SilentlyContinue"
+    },
+    {
+      "name": "Service Fabric SDK",
+      "winget_id": "Microsoft.ServiceFabricSDK",
+      "chocolatey_id": "servicefabric-sdk",
+      "custom_install": true,
+      "check_command": "Get-ChildItem -Path 'C:\\Program Files\\Microsoft SDKs\\Service Fabric\\' -ErrorAction SilentlyContinue"
+    },
+    {
+      "name": "Service Fabric Runtime",
+      "winget_id": "Microsoft.ServiceFabricRuntime",
+      "chocolatey_id": "servicefabric-runtime",
+      "custom_install": true,
+      "check_command": "Get-Service -Name FabricHostSvc -ErrorAction SilentlyContinue"
     }
   ],
   "networking": [
@@ -149,6 +164,18 @@
       "custom_install": true,
       "install_command": "jabba install openjdk@1.21; jabba use openjdk@1.21",
       "check_command": "jabba ls | Select-String '21'"
+    },
+    {
+      "name": "Node.js 14.6.1 (via NVM)",
+      "custom_install": true,
+      "install_command": "nvm install 14.6.1",
+      "check_command": "nvm list | Select-String '14.6.1'"
+    },
+    {
+      "name": "Node.js 20.1 (via NVM)",
+      "custom_install": true,
+      "install_command": "nvm install 20.1; nvm use 20.1",
+      "check_command": "nvm list | Select-String '20.1'"
     }
   ],
   "system_configuration": {

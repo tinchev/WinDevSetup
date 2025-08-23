@@ -22,11 +22,20 @@ function Install-CustomSoftware {
         "Visual Studio Professional" {
             return Install-VisualStudioProfessional -Software $Software
         }
+        { $_ -like "Service Fabric*" } {
+            return Install-ServiceFabricSDK -Software $Software -LogPath $LogPath
+        }
         "SQL Server Developer Edition" {
             return Install-SqlServerDeveloper
         }
         ".NET Core 2.2" {
             return Install-DotNetCore22
+        }
+        { $_ -like "*via NVM*" } {
+            return Install-WithNVM -InstallCommand $Software.install_command
+        }
+        { $_ -like "*via Jabba*" } {
+            return Install-WithJabba -InstallCommand $Software.install_command
         }
         default {
             Write-LogWarning "No custom installation method defined for $($Software.name)"
@@ -189,10 +198,10 @@ function Install-VisualStudioProfessional {
 
 function Install-WithJabba {
     param (
-        [object]$Software
+        [string]$InstallCommand
     )
     
-    Write-LogInfo "Installing $($Software.name) using Jabba..."
+    Write-LogInfo "Installing Java version using Jabba..."
     
     try {
         # Verify jabba is available
@@ -203,34 +212,186 @@ function Install-WithJabba {
         }
         
         # Execute the jabba command
-        Write-LogInfo "Executing: $($Software.install_command)"
-        Invoke-Expression $Software.install_command
+        Write-LogInfo "Executing: $InstallCommand"
+        Invoke-Expression $InstallCommand
         
         # Give it a moment to complete
         Start-Sleep -Seconds 2
         
-        # Verify installation using the check command if provided
-        if ($Software.check_command) {
-            try {
-                $CheckResult = Invoke-Expression $Software.check_command
-                if ($CheckResult) {
-                    Write-LogInfo "$($Software.name) installed successfully via Jabba"
-                    return $true
-                } else {
-                    Write-LogWarning "$($Software.name) installation may have failed - check command returned no results"
-                    return $false
+        Write-LogInfo "Java version installation completed via Jabba"
+        return $true
+        
+    } catch {
+        Write-LogError "Failed to install Java version with Jabba: $_"
+        return $false
+    }
+}
+
+function Install-WithNVM {
+    param (
+        [string]$InstallCommand
+    )
+    
+    Write-LogInfo "Installing Node.js version using NVM..."
+    
+    try {
+        # Verify NVM is available
+        $NVMPath = Get-Command "nvm" -ErrorAction SilentlyContinue
+        if (-not $NVMPath) {
+            Write-LogError "NVM not found. Please install NVM for Windows first."
+            return $false
+        }
+        
+        # Refresh PATH to ensure NVM is available
+        $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
+        
+        # Execute the NVM command
+        Write-LogInfo "Executing: $InstallCommand"
+        
+        # Split the command to handle multiple commands (like install and use)
+        $Commands = $InstallCommand -split ";"
+        foreach ($Command in $Commands) {
+            $Command = $Command.Trim()
+            if ($Command) {
+                Write-LogInfo "Running: $Command"
+                $Result = Start-Process -FilePath "cmd" -ArgumentList "/c", $Command -Wait -PassThru -NoNewWindow
+                if ($Result.ExitCode -ne 0) {
+                    Write-LogWarning "Command '$Command' returned exit code $($Result.ExitCode)"
                 }
-            } catch {
-                Write-LogWarning "Could not verify $($Software.name) installation: $_"
-                # Still return true if the install command succeeded
-                return $true
             }
-        } else {
-            Write-LogInfo "$($Software.name) installation command completed"
+        }
+        
+        Write-LogInfo "Node.js version installation completed via NVM"
+        return $true
+        
+    } catch {
+        Write-LogError "Failed to install Node.js version with NVM: $_"
+        return $false
+    }
+}
+
+function Install-ServiceFabricSDK {
+    param (
+        [object]$Software,
+        [string]$LogPath
+    )
+    
+    Write-LogInfo "Installing $($Software.name) with custom arguments..."
+    
+    try {
+        # Check if already installed
+        $CheckResult = Invoke-Expression $Software.check_command -ErrorAction SilentlyContinue
+        if ($CheckResult) {
+            Write-LogInfo "$($Software.name) is already installed"
             return $true
         }
+        
+        # Import PackageManager module for proper installation handling
+        Import-Module "$PSScriptRoot\PackageManager.psm1" -Force
+        
+        # Try to download using winget first, then chocolatey
+        $downloadSuccess = $false
+        $installerPath = $null
+        
+        # Try winget download first
+        if ($Software.winget_id) {
+            Write-LogInfo "Attempting to download $($Software.name) via winget..."
+            try {
+                # Create temporary directory
+                $tempDir = Join-Path $env:TEMP "ServiceFabric_$(Get-Random)"
+                New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
+                
+                # Download using winget with license acceptance
+                $wingetArgs = @(
+                    "download",
+                    "--id", $Software.winget_id,
+                    "--download-directory", $tempDir,
+                    "--accept-package-agreements",
+                    "--accept-source-agreements"
+                )
+                $wingetDownload = Start-Process -FilePath "winget" -ArgumentList $wingetArgs -Wait -PassThru -NoNewWindow
+                
+                if ($wingetDownload.ExitCode -eq 0) {
+                    # Find the downloaded installer
+                    $installerPath = Get-ChildItem -Path $tempDir -Recurse -Filter "*.exe" | Select-Object -First 1 -ExpandProperty FullName
+                    if ($installerPath) {
+                        Write-LogInfo "Successfully downloaded $($Software.name) installer: $installerPath"
+                        $downloadSuccess = $true
+                    }
+                }
+            } catch {
+                Write-LogWarning "Winget download failed: $_"
+            }
+        }
+        
+        # If winget failed, try chocolatey with proper logging
+        if (-not $downloadSuccess -and $Software.chocolatey_id) {
+            Write-LogInfo "Attempting to install $($Software.name) via chocolatey..."
+            try {
+                # Use Install-WithChocolatey for consistent logging, but it doesn't support custom params
+                # So we'll use Start-PackageInstallation with choco command directly
+                $chocoArgs = "install $($Software.chocolatey_id) -y --params '/accepteula /quiet'"
+                
+                # Get proper log path
+                $RunFolder = Get-CurrentRunFolder
+                if (-not $RunFolder) {
+                    $RunFolder = "$PSScriptRoot\..\..\logs"
+                }
+                $LogFile = Join-Path $RunFolder "chocolatey-$($Software.name -replace '[^\w\-_\.]', '_')-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+                
+                $result = Start-PackageInstallation -Command "choco" -Arguments $chocoArgs -Name $Software.name -LogFile $LogFile
+                
+                if ($result) {
+                    Write-LogInfo "$($Software.name) installed successfully via chocolatey"
+                    return $true
+                } else {
+                    Write-LogWarning "Chocolatey installation failed"
+                }
+            } catch {
+                Write-LogWarning "Chocolatey installation failed: $_"
+            }
+        }
+        
+        # If we have a downloaded installer, run it with proper arguments using Start-PackageInstallation
+        if ($downloadSuccess -and $installerPath) {
+            Write-LogInfo "Running $($Software.name) installer with proper arguments..."
+            
+            try {
+                # Get proper log path
+                $RunFolder = Get-CurrentRunFolder
+                if (-not $RunFolder) {
+                    $RunFolder = "$PSScriptRoot\..\..\logs"
+                }
+                $LogFile = Join-Path $RunFolder "custom-installer-$($Software.name -replace '[^\w\-_\.]', '_')-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
+                
+                # Use Start-PackageInstallation for consistent logging and exit code handling
+                $installerArgs = "/accepteula /quiet"
+                $result = Start-PackageInstallation -Command $installerPath -Arguments $installerArgs -Name $Software.name -LogFile $LogFile
+                
+                # Clean up temporary directory
+                try { Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue } catch { }
+                
+                if ($result) {
+                    Write-LogInfo "$($Software.name) installed successfully"
+                    return $true
+                } else {
+                    Write-LogError "$($Software.name) installation failed"
+                    return $false
+                }
+                
+            } catch {
+                # Clean up on error
+                try { Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue } catch { }
+                Write-LogError "Failed to execute $($Software.name) installer: $_"
+                return $false
+            }
+        }
+        
+        Write-LogError "All $($Software.name) installation methods failed"
+        return $false
+        
     } catch {
-        Write-LogError "Failed to install $($Software.name) with Jabba: $_"
+        Write-LogError "Failed to install $($Software.name): $_"
         return $false
     }
 }
@@ -286,4 +447,4 @@ function Install-DotNetCore22 {
 }
 
 # Export functions
-Export-ModuleMember -Function Install-CustomSoftware, Install-VisualStudioProfessional, Install-WithJabba
+Export-ModuleMember -Function Install-CustomSoftware, Install-VisualStudioProfessional, Install-WithJabba, Install-WithNVM, Install-ServiceFabricSDK

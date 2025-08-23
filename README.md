@@ -45,6 +45,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/tinchev/WinDevSetup/ma
 - Docker Desktop
 - Android Studio
 - Node.js
+- Service Fabric SDK & Runtime
 - SQL Server Developer Edition
 - Jabba (Java Version Manager)
 
@@ -55,6 +56,9 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/tinchev/WinDevSetup/ma
 
 ### Java Development Kits (via Jabba)
 - Java 8, 11, 17, 21 (managed by Jabba)
+
+### Node.js Runtimes (via NVM)
+- Node.js 14.6.1, 20.1 (managed by NVM)
 
 ### Networking Tools
 - Azure VPN Client (Microsoft Store)
@@ -159,6 +163,15 @@ Uses Jabba for flexible Java version management:
 
 ## Troubleshooting
 
+### Script Execution Policy
+**Problem**: The setup script fails to run due to script execution policy restrictions.  
+**Solution**: Open PowerShell as an administrator and run the following command to allow script execution:
+```powershell
+Set-ExecutionPolicy RemoteSigned
+```
+After changing the policy, try running the setup script again.
+
+### Common Issues
 - **Run as Administrator**: Most installations require elevated privileges
 - **Check organized logs**: Each run creates a timestamped folder in `logs/`
 - **Review individual package logs**: Each installer has detailed output logs
