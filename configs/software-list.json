@@ -80,14 +80,14 @@
     {
       "name": "Service Fabric SDK",
       "winget_id": "Microsoft.ServiceFabricSDK",
-      "chocolatey_id": "servicefabric-sdk",
+      "chocolatey_id": "service-fabric-sdk",
       "custom_install": true,
       "check_command": "Get-ChildItem -Path 'C:\\Program Files\\Microsoft SDKs\\Service Fabric\\' -ErrorAction SilentlyContinue"
     },
     {
       "name": "Service Fabric Runtime",
       "winget_id": "Microsoft.ServiceFabricRuntime",
-      "chocolatey_id": "servicefabric-runtime",
+      "chocolatey_id": "service-fabric",
       "custom_install": true,
       "check_command": "Get-Service -Name FabricHostSvc -ErrorAction SilentlyContinue"
     }
