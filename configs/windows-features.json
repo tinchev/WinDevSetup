@@ -1,0 +1,19 @@
+{
+  "features": {
+    "Hyper-V": {
+      "enabled": true
+    },
+    "Windows-Subsystem-Linux": {
+      "enabled": true
+    },
+    "IIS": {
+      "enabled": false
+    },
+    "TelnetClient": {
+      "enabled": true
+    },
+    "SMB1Protocol": {
+      "enabled": false
+    }
+  }
+}

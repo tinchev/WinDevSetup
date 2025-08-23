@@ -1,0 +1,182 @@
+{
+  "productivity": [
+    {
+      "name": "Microsoft Office",
+      "winget_id": "Microsoft.Office",
+      "chocolatey_id": "microsoft-office-deployment",
+      "check_command": "(Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* -ErrorAction SilentlyContinue | Where-Object {$_.DisplayName -like '*Microsoft Office*' -or $_.DisplayName -like '*Microsoft 365*'})"
+    },
+    {
+      "name": "Microsoft Word",
+      "winget_id": "Microsoft.Office",
+      "chocolatey_id": "office365business",
+      "check_command": "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {$_.DisplayName -like '*Microsoft Office*'}"
+    },
+    {
+      "name": "Microsoft Excel",
+      "winget_id": "Microsoft.Office",
+      "chocolatey_id": "office365business",
+      "check_command": "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {$_.DisplayName -like '*Microsoft Office*'}"
+    }
+  ],
+  "design": [
+    {
+      "name": "Figma",
+      "winget_id": "Figma.Figma",
+      "chocolatey_id": "figma",
+      "check_command": "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {$_.DisplayName -like '*Figma*'}"
+    }
+  ],
+  "development": [
+    {
+      "name": "Git",
+      "winget_id": "Git.Git",
+      "chocolatey_id": "git",
+      "check_command": "git --version"
+    },
+    {
+      "name": "Visual Studio Code",
+      "winget_id": "Microsoft.VisualStudioCode",
+      "chocolatey_id": "vscode",
+      "check_command": "code --version"
+    },
+    {
+      "name": "Visual Studio Professional",
+      "custom_install": true,
+      "check_command": "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {$_.DisplayName -like '*Visual Studio*Professional*'}"
+    },
+    {
+      "name": "Docker Desktop",
+      "winget_id": "Docker.DockerDesktop",
+      "chocolatey_id": "docker-desktop",
+      "check_command": "docker --version"
+    },
+    {
+      "name": "Android Studio",
+      "winget_id": "Google.AndroidStudio",
+      "chocolatey_id": "androidstudio",
+      "check_command": "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {$_.DisplayName -like '*Android Studio*'}"
+    },
+    {
+      "name": "Node.js with NVM",
+      "winget_id": "CoreyButler.NVMforWindows",
+      "chocolatey_id": "nvm",
+      "check_command": "nvm version"
+    },
+    {
+      "name": "Jabba (Java Version Manager)",
+      "winget_id": "jabba-team.jabba",
+      "chocolatey_id": "jabba",
+      "check_command": "Get-Command jabba -ErrorAction SilentlyContinue"
+    },
+    {
+      "name": "SQL Server Developer Edition",
+      "winget_id": "Microsoft.SQLServer.2022.Developer",
+      "chocolatey_id": "sql-server-2022",
+      "custom_install": false,
+      "check_command": "Get-Service -Name MSSQLSERVER -ErrorAction SilentlyContinue"
+    }
+  ],
+  "networking": [
+    {
+      "name": "Azure VPN Client",
+      "winget_id": "9NP355QT2SQB",
+      "check_command": "Get-AppxPackage -Name Microsoft.AzureVpn"
+    },
+    {
+      "name": "OpenVPN Connect",
+      "winget_id": "OpenVPNTechnologies.OpenVPNConnect",
+      "chocolatey_id": "openvpn-connect",
+      "check_command": "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {$_.DisplayName -like '*OpenVPN*'}"
+    }
+  ],
+  "runtimes": [
+    {
+      "name": ".NET Framework 4.6.1",
+      "chocolatey_id": "dotnetfx",
+      "check_command": "Get-ItemProperty 'HKLM:SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\' | Select-Object Release"
+    },
+    {
+      "name": ".NET Framework 4.8",
+      "winget_id": "Microsoft.DotNet.Framework.DeveloperPack_4",
+      "chocolatey_id": "netfx-4.8-devpack",
+      "check_command": "Get-ItemProperty 'HKLM:SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\' | Select-Object Release"
+    },
+    {
+      "name": ".NET Core 2.2",
+      "chocolatey_id": "dotnetcore-2.2-sdk",
+      "custom_install": true,
+      "check_command": "dotnet --list-sdks | Select-String '2.2'"
+    },
+    {
+      "name": ".NET Core 3.1",
+      "winget_id": "Microsoft.DotNet.SDK.3_1",
+      "chocolatey_id": "dotnetcore-3.1-sdk",
+      "check_command": "dotnet --list-sdks | Select-String '3.1'"
+    },
+    {
+      "name": ".NET 6",
+      "winget_id": "Microsoft.DotNet.SDK.6",
+      "chocolatey_id": "dotnet-6.0-sdk",
+      "check_command": "dotnet --list-sdks | Select-String '6.0'"
+    },
+    {
+      "name": ".NET 8",
+      "winget_id": "Microsoft.DotNet.SDK.8",
+      "chocolatey_id": "dotnet-8.0-sdk",
+      "check_command": "dotnet --list-sdks | Select-String '8.0'"
+    },
+    {
+      "name": "Java 8 (via Jabba)",
+      "custom_install": true,
+      "install_command": "jabba install zulu@1.8.0",
+      "check_command": "jabba ls | Select-String '1.8'"
+    },
+    {
+      "name": "Java 11 (via Jabba)",
+      "custom_install": true,
+      "install_command": "jabba install openjdk@1.11",
+      "check_command": "jabba ls | Select-String '11'"
+    },
+    {
+      "name": "Java 17 (via Jabba)",
+      "custom_install": true,
+      "install_command": "jabba install openjdk@1.17",
+      "check_command": "jabba ls | Select-String '17'"
+    },
+    {
+      "name": "Java 21 (via Jabba)",
+      "custom_install": true,
+      "install_command": "jabba install openjdk@1.21; jabba use openjdk@1.21",
+      "check_command": "jabba ls | Select-String '21'"
+    }
+  ],
+  "system_configuration": {
+    "folders_to_create": [
+      "C:\\Repos"
+    ],
+    "windows_defender_exclusions": [
+      "C:\\Repos",
+      "C:\\Program Files\\Microsoft Service Fabric",
+      "C:\\ProgramData\\SF",
+      "C:\\Program Files (x86)\\Microsoft Visual Studio",
+      "C:\\Program Files\\Microsoft Visual Studio",
+      "C:\\Users\\%USERNAME%\\.nuget",
+      "C:\\Users\\%USERNAME%\\.dotnet"
+    ],
+    "windows_features": [
+      "Microsoft-Windows-Subsystem-Linux",
+      "VirtualMachinePlatform", 
+      "Containers-DisposableClientVM",
+      "HypervisorPlatform",
+      "Microsoft-Hyper-V-All"
+    ]
+  },
+  "repositories": [
+    {
+      "name": "Example Repo",
+      "url": "https://github.com/organization/repo.git",
+      "local_path": "C:\\Repos\\repo"
+    }
+  ]
+}

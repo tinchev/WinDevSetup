@@ -1,0 +1,24 @@
+{
+  "RegistrySettings": {
+    "Settings": [
+      {
+        "Path": "HKEY_LOCAL_MACHINE\\Software\\YourCompany\\YourApp",
+        "Name": "SettingName1",
+        "Value": "Value1",
+        "Type": "String"
+      },
+      {
+        "Path": "HKEY_CURRENT_USER\\Software\\YourCompany\\YourApp",
+        "Name": "SettingName2",
+        "Value": 1,
+        "Type": "DWord"
+      },
+      {
+        "Path": "HKEY_LOCAL_MACHINE\\Software\\YourCompany\\YourApp",
+        "Name": "SettingName3",
+        "Value": "Value3",
+        "Type": "String"
+      }
+    ]
+  }
+}
