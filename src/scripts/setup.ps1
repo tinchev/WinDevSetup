@@ -25,7 +25,7 @@ function Show-OverallInstallationStatus {
     Write-LogInfo "Pre-Installation Status Check"
     Write-LogInfo "========================================="
     
-    $Categories = @('productivity', 'design', 'development', 'networking', 'runtimes')
+    $Categories = @('productivity', 'design', 'development', 'virtualization', 'networking', 'runtimes')
     $TotalInstalled = 0
     $TotalSoftware = 0
     
@@ -286,7 +286,7 @@ function Start-Setup {
     # Step 6: Install software by category
     Write-LogInfo "Step 6: Installing software..."
     
-    $Categories = @('productivity', 'design', 'development', 'networking', 'runtimes')
+    $Categories = @('productivity', 'design', 'development', 'virtualization', 'networking', 'runtimes')
     foreach ($Category in $Categories) {
         if ($Config.$Category) {
             Write-LogInfo "Installing $Category software..."

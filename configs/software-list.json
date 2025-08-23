@@ -92,6 +92,15 @@
       "check_command": "Get-Service -Name FabricHostSvc -ErrorAction SilentlyContinue"
     }
   ],
+  "virtualization": [
+    {
+      "name": "Oracle VirtualBox",
+      "winget_id": "Oracle.VirtualBox",
+      "chocolatey_id": "virtualbox",
+      "custom_install": false,
+      "check_command": "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {$_.DisplayName -like '*VirtualBox*'}"
+    }
+  ],
   "networking": [
     {
       "name": "Azure VPN Client",

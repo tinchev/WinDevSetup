@@ -1,0 +1,20 @@
+{
+  "test_vms": {
+    "Windows11-Test": {
+      "memory": 16384,
+      "cpus": 8,
+      "vram": 128,
+      "disk_size": 251200,
+      "os_type": "Windows11_64",
+      "description": "Windows 11 for idempotency testing"
+    }
+  },
+  "test_scenarios": {
+    "idempotency": {
+      "description": "Run setup twice to test idempotency",
+      "script_args": "",
+      "run_twice": true,
+      "expected_minutes": 50
+    }
+  }
+}

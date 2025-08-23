@@ -60,6 +60,9 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/tinchev/WinDevSetup/ma
 ### Node.js Runtimes (via NVM)
 - Node.js 14.6.1, 20.1 (managed by NVM)
 
+### Virtualization Tools
+- Oracle VirtualBox (for testing and development VMs)
+
 ### Networking Tools
 - Azure VPN Client (Microsoft Store)
 - OpenVPN Connect
