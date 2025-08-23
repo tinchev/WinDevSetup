@@ -44,9 +44,15 @@ function Download-SetupFiles {
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
         Invoke-WebRequest -Uri $ZipUrl -OutFile $ZipPath -UseBasicParsing
         
-        # Extract ZIP file
+        # Extract ZIP file        
         Write-Host "Extracting files..."
         Add-Type -AssemblyName System.IO.Compression.FileSystem
+                
+        $ExtractedPath = Join-Path $env:TEMP "WinDevSetup-$Branch"
+        if (Test-Path $ExtractedPath) {
+            Remove-Item $ExtractedPath -Recurse -Force -ErrorAction SilentlyContinue
+        }
+        
         [System.IO.Compression.ZipFile]::ExtractToDirectory($ZipPath, $env:TEMP)
         
         # Move files to destination
