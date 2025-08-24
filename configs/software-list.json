@@ -175,16 +175,22 @@
       "check_command": "jabba ls | Select-String '21'"
     },
     {
-      "name": "Node.js 14.6.1 (via NVM)",
+      "name": "Node.js 12.13.0 (via NVM)",
       "custom_install": true,
-      "install_command": "nvm install 14.6.1",
-      "check_command": "nvm list | Select-String '14.6.1'"
+      "install_command": "nvm install 12.13.0",
+      "check_command": "nvm list | Select-String '12.13.0'"
     },
     {
-      "name": "Node.js 20.1 (via NVM)",
+      "name": "Node.js 14.9.0 (via NVM)",
       "custom_install": true,
-      "install_command": "nvm install 20.1; nvm use 20.1",
-      "check_command": "nvm list | Select-String '20.1'"
+      "install_command": "nvm install 14.9.0",
+      "check_command": "nvm list | Select-String '14.9.0'"
+    },
+    {
+      "name": "Node.js 20.15 (via NVM)",
+      "custom_install": true,
+      "install_command": "nvm install 20.15; nvm use 20.15",
+      "check_command": "nvm list | Select-String '20.15'"
     }
   ],
   "system_configuration": {
