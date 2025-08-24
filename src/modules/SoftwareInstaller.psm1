@@ -97,7 +97,11 @@ function Install-SingleSoftware {
     
     # Try Winget first
     if ($Software.winget_id -and -not $Success) {
-        $Success = Install-WithWinget -PackageId $Software.winget_id -Name $Software.name
+        if ($Software.version) {
+            $Success = Install-WithWinget -PackageId $Software.winget_id -Name $Software.name -Version $Software.version
+        } else {
+            $Success = Install-WithWinget -PackageId $Software.winget_id -Name $Software.name
+        }
     }
     
     # Try Chocolatey as fallback

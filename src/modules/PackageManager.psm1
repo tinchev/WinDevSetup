@@ -9,7 +9,8 @@ if (-not (Get-Command Write-LogInfo -ErrorAction SilentlyContinue)) {
 function Install-WithWinget {
     param (
         [string]$PackageId,
-        [string]$Name
+        [string]$Name,
+        [string]$Version = $null
     )
     
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
@@ -25,9 +26,17 @@ function Install-WithWinget {
     $LogFile = Join-Path $RunFolder "winget-$($Name -replace '[^\w\-_\.]', '_')-$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
     
     try {
-        Write-LogInfo "Installing $Name via Winget... (Log: $(Split-Path $LogFile -Leaf))"
+        # Build winget arguments with optional version
+        $WingetArgs = "install --id `"$PackageId`" --silent --accept-source-agreements --accept-package-agreements --verbose"
         
-        $Result = Start-PackageInstallation -Command "winget" -Arguments "install --id `"$PackageId`" --silent --accept-source-agreements --accept-package-agreements --verbose" -Name $Name -LogFile $LogFile
+        if ($Version) {
+            $WingetArgs += " --version `"$Version`""
+            Write-LogInfo "Installing $Name (version $Version) via Winget... (Log: $(Split-Path $LogFile -Leaf))"
+        } else {
+            Write-LogInfo "Installing $Name via Winget... (Log: $(Split-Path $LogFile -Leaf))"
+        }
+        
+        $Result = Start-PackageInstallation -Command "winget" -Arguments $WingetArgs -Name $Name -LogFile $LogFile
         
         return $Result
     } catch {

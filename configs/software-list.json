@@ -61,6 +61,7 @@
       "name": "Node.js with NVM",
       "winget_id": "CoreyButler.NVMforWindows",
       "chocolatey_id": "nvm",
+      "version": "1.1.11",
       "custom_install": false,
       "check_command": "nvm version"
     },
@@ -177,13 +178,13 @@
     {
       "name": "Node.js 12.13.0 (via NVM)",
       "custom_install": true,
-      "install_command": "nvm install 12.13.0",
+      "install_command": "nvm install v12.13.0",
       "check_command": "nvm list | Select-String '12.13.0'"
     },
     {
       "name": "Node.js 14.9.0 (via NVM)",
       "custom_install": true,
-      "install_command": "nvm install 14.9.0",
+      "install_command": "nvm install v14.9.0",
       "check_command": "nvm list | Select-String '14.9.0'"
     },
     {
